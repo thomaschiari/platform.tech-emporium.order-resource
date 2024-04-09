@@ -1,11 +1,13 @@
 package com.insper.store.order;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -45,36 +47,36 @@ public class OrderResource implements OrderController {
     }
 
     @Override
-    public ResponseEntity<Order> create(Order order) {
-        OrderModel model = orderService.create(order);
+    public ResponseEntity<OrderOut> create(OrderIn orderIn) {
+        OrderModel orderModel = orderService.create(orderIn);
         return ResponseEntity.created(
             ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(model.id())
+                .buildAndExpand(orderModel.id())
                 .toUri()
-        ).body(model.to());
+        ).body(orderModel.to());
     }
 
     @Override
-    public ResponseEntity<Order> read(String id) {
-        return orderService.read(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<OrderOut> get(String id) {
+        Optional<OrderModel> result = orderService.read(id);
+        return result.map(orderModel -> ResponseEntity.ok(orderModel.to()))
+                     .orElse(ResponseEntity.notFound().build());
+        
     }
 
     @Override
-    public ResponseEntity<Order> update(String id, Order order) {
-        return orderService.update(id, order)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<OrderOut> update(String id, OrderIn order) {
+        Optional<OrderModel> result = orderService.update(id, order);
+        return result.map(orderModel -> ResponseEntity.ok(orderModel.to()))
+                     .orElse(ResponseEntity.notFound().build());
     }
 
     @Override
-    public ResponseEntity<Void> delete(String id) {
-        return orderService.delete(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        orderService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

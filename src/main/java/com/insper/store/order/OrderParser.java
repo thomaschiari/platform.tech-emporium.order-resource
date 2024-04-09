@@ -13,9 +13,6 @@ class OrderParser {
     public static OrderOut to(Order order) {
         return OrderOut.builder()
             .id(order.id())
-            .productId(order.productId())
-            .quantity(order.quantity())
-            .email(order.email())
             .build();
     }
     

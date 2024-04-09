@@ -1,9 +1,6 @@
 package com.insper.store.order;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,18 +13,21 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
-    public OrderModel create(Order in) {
+    public OrderModel create(OrderIn in) {
         return orderRepository.save(new OrderModel(in));
     }
 
-    public Order read(@NonNull String id) {
-        return orderRepository.findById(id).map(OrderModel::to).orElse(null);
+    public Optional<OrderModel> read(@NonNull String id) {
+        return orderRepository.findById(id);
     }
 
-    public Order update(@NonNull String id, Order in) {
-        OrderModel model = orderRepository.findById(id).orElseThrow();
-        model.update(in);
-        return orderRepository.save(model).to();
+    public Optional<OrderModel> update(@NonNull String id, OrderIn in) {
+        return orderRepository.findById(id).map(order -> {
+            order.productId(in.productId());
+            order.quantity(in.quantity());
+            order.email(in.email());
+            return orderRepository.save(order);
+        });
     }
 
     public void delete(@NonNull String id) {

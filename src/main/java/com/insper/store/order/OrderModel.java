@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(of = "id")
 @Builder @Getter @Setter @Accessors(chain = true, fluent = true)
 @NoArgsConstructor @AllArgsConstructor
-public class Order {
+public class OrderModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,20 +35,22 @@ public class Order {
     @Column(name = "email_order")
     private String email;
 
-    public OrderModel(Order o) {
-        this.id = o.id();
+    public OrderModel(OrderIn o) {
         this.productId = o.productId();
         this.quantity = o.quantity();
         this.email = o.email();
     }
 
-    public Order to() {
-        return Order.builder()
+    public OrderOut to() {
+        return OrderOut.builder()
             .id(id)
-            .productId(productId)
-            .quantity(quantity)
-            .email(email)
             .build();
+    }
+
+    public void update(OrderIn o) {
+        this.productId = o.productId();
+        this.quantity = o.quantity();
+        this.email = o.email();
     }
     
 }
