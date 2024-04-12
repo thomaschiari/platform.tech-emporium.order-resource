@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import io.swagger.annotations.ApiOperation;
 
 @RestController
 public class OrderResource implements OrderController {
@@ -19,7 +18,6 @@ public class OrderResource implements OrderController {
     @Autowired
     private OrderService orderService;
 
-    @ApiOperation(value = "Get information about the microservice")
     @GetMapping("/orders/info")
     public ResponseEntity<Map<String, String>> info() {
         return new ResponseEntity<Map<String, String>>(
